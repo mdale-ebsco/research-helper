@@ -1,0 +1,32 @@
+body {
+  background-color: #F2F2F2;
+}
+.research-helper {
+  text-align: center;
+  width: 50%;
+  margin: 5px auto;
+  padding: 15px;
+  background: #FFFFFF;
+  border-radius: 2px;
+}
+
+.header {
+  height: 80px;
+  padding: 20px;
+  color: #222;
+}
+
+.description {
+  text-align:left;
+}
+
+button {
+  margin:10px 0;
+  padding:10px;
+  border:none;
+  background:#643B82;
+  cursor:pointer;
+  font-size:18px;
+  color:#FFFFFF;
+  border-radius: 2px;
+}
