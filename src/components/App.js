@@ -6,11 +6,15 @@ import '../css/App.css';
 
 const machine = {
   start: {
-    GETSTARTED: 'input_topic'
-  },
-  input_topic: {
     BACKGROUND: 'researchstarter',
-    RESEARCH: 'eds',
+    RESEARCH: 'eds'
+  },
+  researchstarter: {
+    SUBMITQUERY: 'rsResults',
+  },
+  eds: {
+    ANSWERQUESTION: 'edsResults',
+    SUBMITQUERY: 'edsResults'
   }
 };
 
@@ -28,16 +32,13 @@ class App extends Component {
 
     command(nextState, action) {
     switch (nextState) {
-      case 'input_topic':
-          alert("Hello from the command!");
-        break;
       case 'researchstarter':
-        if (action.items) {
-          // update the state with the found items
-          return { items: action.items };
-        }
+        alert("Research Starter");
         break;
       case 'eds':
+        alert("EDS");
+        break;
+      case 'null':
         if (action.item) {
           // update the state with the selected photo item
           return { items: action.item };
@@ -66,16 +67,30 @@ class App extends Component {
  handleSubmit(e) {
     e.persist();
     e.preventDefault();
-    this.transition({ type: 'GETSTARTED'});
+    this.setState({currentState: e.target.helperState});  
+    this.transition({ type: e.target.name});
   }
 
   renderStartPage(state){
     return(
+      <div>
+        <p>Are you looking for background information on a subject? Or do you have something specific you would like to research?</p>
+        <p><span className="example">An example of a specific research topic might be 'College Student Use of Snapchat'.</span><span className="example">An example of a topic you might find background information about might be 'Flower Arranging'.</span></p>
         <button
+            name="BACKGROUND"
+            helperState="researchstarter"
             onClick={e => this.handleSubmit(e)}
             >
-            Get Started
+            Background Information
           </button>
+          <button
+            name="RESEARCH"
+            helperState="eds"
+            onClick={e => this.handleSubmit(e)}
+            >
+            Specific Research
+          </button>
+        </div>
     )
   }
 
