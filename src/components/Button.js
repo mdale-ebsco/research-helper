@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import '../css/App.css';
 
-class Button extends Component {
-  render() {
-    return (
-      <div>
-        <button>Get Started</button>
-      </div>
-    );
-  }
-}
+const Button = (props) => (
+  <button>{props.value}</button>
+);
 
 export default Button;
