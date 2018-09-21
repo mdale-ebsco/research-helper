@@ -1,23 +1,92 @@
 import React, { Component } from 'react';
 import Header from './Header';
-import Text from './Text';
-import Button from './Button';
-import logo from '../images/logo.svg';
+import FormContainer from './FormContainer';
+
 import '../css/App.css';
 
+const machine = {
+  start: {
+    GETSTARTED: 'input_topic'
+  },
+  input_topic: {
+    BACKGROUND: 'researchstarter',
+    RESEARCH: 'eds',
+  }
+};
+
+const initialState = 'start';
+
 class App extends Component {
+  constructor(props) {
+      super(props);
+      this.state = {
+          currentState: 'start',
+          query: '',
+          items: []
+        };
+    }
+
+    command(nextState, action) {
+    switch (nextState) {
+      case 'input_topic':
+          alert("Hello from the command!");
+        break;
+      case 'researchstarter':
+        if (action.items) {
+          // update the state with the found items
+          return { items: action.items };
+        }
+        break;
+      case 'eds':
+        if (action.item) {
+          // update the state with the selected photo item
+          return { items: action.item };
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  transition(action) {
+   const currentHelperState = this.state.currentState;
+   const nextHelperState =
+     machine[currentHelperState][action.type];
+
+   if (nextHelperState) {
+     const nextState = this.command(nextHelperState, action);
+
+     this.setState({
+       currentState: nextHelperState,
+       ...nextState
+     });
+   }
+ }
+
+ handleSubmit(e) {
+    e.persist();
+    e.preventDefault();
+    this.transition({ type: 'GETSTARTED'});
+  }
+
+  renderStartPage(state){
+    return(
+        <button
+            onClick={e => this.handleSubmit(e)}
+            >
+            Get Started
+          </button>
+    )
+  }
+
   render() {
+    const helperState = this.state.currentState;
     return (
-      <div class="research-helper">
+      <div className="research-helper">
         <Header heading="Research Helper"/>
-        <div class="content">
-          <div class="description">
-            <p>
-            The Research Helper is a tool to assist you in finding resources for your class paper, project, discussions, or other assignments.</p>
-            <p> The Research Helper will ask you a few questions about your topic and the resources you need, then help you navigate the results. Ready to get started? Click "Start my Research" below!
-            </p>
-          </div>
-          <Button value="Get Started!"/>
+        <div className="content">
+          <FormContainer/>
+           {this.renderStartPage(helperState)}
         </div>
       </div>
     );
