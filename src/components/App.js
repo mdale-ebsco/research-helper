@@ -31,14 +31,25 @@ class App extends Component {
       this.state = {
           currentState: 'start',
           query: '',
-          items: []
+          items: [],
+          profile: 'edsfreedbs'
         };
+        this.transition = this.transition.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      if (this.state.currentState === 'rsStart') {
+        this.renderRSStartPage();
+      }
+      if (this.state.currentState === 'edsStart'){
+        this.renderEDSStartPage();
+      }
     }
 
     command(nextState, action) {
     switch (nextState) {
       case 'rsStart':
-        alert("Research Starter");
+
         break;
       case 'edsStart':
         alert("EDS");
@@ -54,7 +65,7 @@ class App extends Component {
     }
   }
 
-  transition(action) {
+  transition = (action) => {
    const currentHelperState = this.state.currentState;
    const nextHelperState =
      machine[currentHelperState][action.type];
@@ -67,10 +78,22 @@ class App extends Component {
        ...nextState
      });
    }
+   console.log("NextHelperState: ", nextHelperState);
+   console.log("this.state.currentState: ", this.state.currentState);
+ }
+
+ renderRSStartPage(){
+   if (this.state.currentState !== 'rsStart') return;
+   return(
+     <div>
+       <FormContainer profile={this.state.profile} />
+     </div>
+   )
  }
 
 
   renderStartPage(state){
+     if (this.state.currentState !== 'start') return;
     return(
       <div>
         <p>Are you looking for background information on a subject? Or do you have something specific you would like to research?</p>
@@ -96,6 +119,7 @@ class App extends Component {
         <Header heading="Research Helper"/>
         <div className="content">
            {this.renderStartPage(helperState)}
+           {this.renderRSStartPage(helperState)}
         </div>
       </div>
     );
