@@ -60,9 +60,12 @@ class FormContainer extends Component {
             <img src="http://widgets.ebscohost.com/prod/common/images/loader.gif"/>
           }
           {this.state.results.length > 0 &&
+            <span>
+            <h3>Select the topic you would like to explore</h3>
             <ul>
-            {Object.keys(this.state.results).map(key => <Results key={key} result={this.state.results[key]}/>)}
-          </ul>
+              {Object.keys(this.state.results).map(key => <Results key={key} result={this.state.results[key]}/>)}
+            </ul>
+          </span>
           }
       </div>
     </div>

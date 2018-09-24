@@ -13,10 +13,10 @@ class Results extends Component {
     var title = result.Items[0].Data;
     title = title.replace("&lt;highlight&gt;", "");
     title = title.replace("&lt;/highlight&gt;", "");
-    console.log(title);
+
     return (
       <div>
-        <h2>{title}</h2>
+        <p>{title}</p>
       </div>
     );
   }

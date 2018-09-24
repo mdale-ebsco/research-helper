@@ -43,3 +43,7 @@ input#topic {
 .rs-thumb {
   height:20px;
 }
+
+p {
+  text-align: left;
+}
