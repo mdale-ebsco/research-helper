@@ -6,13 +6,18 @@ import '../css/App.css';
 
 const machine = {
   start: {
-    BACKGROUND: 'researchstarter',
-    RESEARCH: 'eds'
+    RS_BTN: 'rsStart',
+    EDS_BTN: 'edsStart'
   },
-  researchstarter: {
-    SUBMITQUERY: 'rsResults',
+  rsStart: {
+    TOPIC_INPUT: 'rsSuccess',
   },
-  eds: {
+  rsSuccess: {
+    EDS_BTN: 'edsStart',
+    SOURCES: 'biblio',
+    RELATED: 'rsSuccess'
+  },
+  edsStart: {
     ANSWERQUESTION: 'edsResults',
     SUBMITQUERY: 'edsResults'
   }
@@ -32,10 +37,10 @@ class App extends Component {
 
     command(nextState, action) {
     switch (nextState) {
-      case 'researchstarter':
+      case 'rsStart':
         alert("Research Starter");
         break;
-      case 'eds':
+      case 'edsStart':
         alert("EDS");
         break;
       case 'null':
@@ -64,12 +69,6 @@ class App extends Component {
    }
  }
 
- handleSubmit(e) {
-    e.persist();
-    e.preventDefault();
-    this.setState({currentState: e.target.helperState});  
-    this.transition({ type: e.target.name});
-  }
 
   renderStartPage(state){
     return(
@@ -77,16 +76,12 @@ class App extends Component {
         <p>Are you looking for background information on a subject? Or do you have something specific you would like to research?</p>
         <p><span className="example">An example of a specific research topic might be 'College Student Use of Snapchat'.</span><span className="example">An example of a topic you might find background information about might be 'Flower Arranging'.</span></p>
         <button
-            name="BACKGROUND"
-            helperState="researchstarter"
-            onClick={e => this.handleSubmit(e)}
+            onClick={() => this.transition({type: 'RS_BTN'})}
             >
             Background Information
           </button>
           <button
-            name="RESEARCH"
-            helperState="eds"
-            onClick={e => this.handleSubmit(e)}
+            onClick={() => this.transition({type: 'EDS_BTN'})}
             >
             Specific Research
           </button>
@@ -100,7 +95,6 @@ class App extends Component {
       <div className="research-helper">
         <Header heading="Research Helper"/>
         <div className="content">
-          <FormContainer/>
            {this.renderStartPage(helperState)}
         </div>
       </div>
