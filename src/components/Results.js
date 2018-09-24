@@ -10,9 +10,13 @@ class Results extends Component {
 
   render() {
     const { result } = this.props;
+    var title = result.Items[0].Data;
+    title = title.replace("&lt;highlight&gt;", "");
+    title = title.replace("&lt;/highlight&gt;", "");
+    console.log(title);
     return (
       <div>
-        Here are your results
+        <h2>{title}</h2>
       </div>
     );
   }

@@ -30,11 +30,10 @@ class FormContainer extends Component {
     fetch(url)
     .then((res) => res.json())
     .then((data) => {
-        var rsResults = data.SearchResult.RelatedContent.RelatedRecords;
+        var rsResults = data.SearchResult.RelatedContent.RelatedRecords[0].Records;
         this.setState({results:rsResults});
         console.log(rsResults);
         if(rsResults){
-          this.renderRSResults();
           this.setState({isLoading:false});
         }
         else {
@@ -44,21 +43,15 @@ class FormContainer extends Component {
 
 
 }
-  renderRSResults(){
-    return(
-      <div>
-        Results
-      </div>
-    )
-  }
+
   render() {
 
     return (
       <div>
       <div>
         <form onSubmit={this.handleSubmit}>
-          <label for="topic">Topic:</label>
-          <input type="text" id="topic" name="topic" required placeholder="What's your topic?" />
+          <label for="topic">What topic would you like to search for?</label>
+          <input type="text" id="topic" name="topic" required placeholder="Search..." />
           <button>Search!</button>
         </form>
       </div>
@@ -67,7 +60,9 @@ class FormContainer extends Component {
             <img src="http://widgets.ebscohost.com/prod/common/images/loader.gif"/>
           }
           {this.state.results.length > 0 &&
-            <Results result={this.state.results}/>
+            <ul>
+            {Object.keys(this.state.results).map(key => <Results key={key} result={this.state.results[key]}/>)}
+          </ul>
           }
       </div>
     </div>
