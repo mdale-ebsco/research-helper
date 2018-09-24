@@ -27,9 +27,9 @@ class FormContainer extends Component {
 
     fetch(url)
     .then((res) => res.json())
-            .then((data) => {
-              console.log('SEARCH RESULTS:', data.SearchResult.RelatedContent.RelatedRecords);
-            })
+    .then((data) => {
+        console.log('SEARCH RESULTS:', data.SearchResult.RelatedContent.RelatedRecords);
+    })
 }
 
   render() {
