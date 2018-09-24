@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import InputContainer from './InputContainer';
-import Prompt from './Prompt';
+import Results from './Results';
 import Button from './Button';
 import { getAuthToken } from '../helpers';
 import '../css/App.css';
@@ -11,7 +11,8 @@ class FormContainer extends Component {
     super(props);
     this.state = {
       results: [],
-      searchTerm: ''
+      searchTerm: '',
+      isLoading: false
     }
     console.log(this.props);
   }
@@ -19,6 +20,7 @@ class FormContainer extends Component {
 
 
   handleSubmit = (event) => {
+    this.setState({isLoading: true});
     event.preventDefault();
     const data = new FormData(event.target);
     var query =  event.target.topic.value;
@@ -28,12 +30,31 @@ class FormContainer extends Component {
     fetch(url)
     .then((res) => res.json())
     .then((data) => {
-        console.log('SEARCH RESULTS:', data.SearchResult.RelatedContent.RelatedRecords);
+        var rsResults = data.SearchResult.RelatedContent.RelatedRecords;
+        this.setState({results:rsResults});
+        console.log(rsResults);
+        if(rsResults){
+          this.renderRSResults();
+          this.setState({isLoading:false});
+        }
+        else {
+          return;
+        }
     })
-}
 
+
+}
+  renderRSResults(){
+    return(
+      <div>
+        Results
+      </div>
+    )
+  }
   render() {
+
     return (
+      <div>
       <div>
         <form onSubmit={this.handleSubmit}>
           <label for="topic">Topic:</label>
@@ -41,6 +62,15 @@ class FormContainer extends Component {
           <button>Search!</button>
         </form>
       </div>
+      <div>
+          {this.state.isLoading &&
+            <img src="http://widgets.ebscohost.com/prod/common/images/loader.gif"/>
+          }
+          {this.state.results.length > 0 &&
+            <Results result={this.state.results}/>
+          }
+      </div>
+    </div>
     );
   }
 }
