@@ -12,11 +12,20 @@ class FormContainer extends Component {
     this.state = {
       results: [],
       searchTerm: '',
-      isLoading: false
+      isLoading: false,
+      selectedStarter: '',
+      title:''
     }
     console.log(this.props);
   }
 
+  selectResult = (key) => {
+    this.setState({selectedStarter:this.state.results[key]});
+    var title = this.state.results[key].Items[0].Data;
+    title = title.replace("&lt;highlight&gt;", "");
+    title = title.replace("&lt;/highlight&gt;", "");
+    this.setState({title:title});
+  }
 
 
   handleSubmit = (event) => {
@@ -63,9 +72,14 @@ class FormContainer extends Component {
             <span>
             <h3>Select the topic you would like to explore</h3>
             <ul>
-              {Object.keys(this.state.results).map(key => <Results key={key} result={this.state.results[key]}/>)}
+              {Object.keys(this.state.results).map(key => <Results key={key} result={this.state.results[key]} loadSelectedStarter={()=>this.selectResult(key)}/>)}
             </ul>
           </span>
+          }
+          { this.state.selectedStarter &&
+            <span>
+              <h3>{this.state.title}</h3>
+            </span>
           }
       </div>
     </div>

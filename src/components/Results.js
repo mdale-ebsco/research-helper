@@ -16,7 +16,7 @@ class Results extends Component {
 
     return (
       <div>
-        <p>{title}</p>
+        <p><a onClick={this.props.loadSelectedStarter}>{title}</a></p>
       </div>
     );
   }
