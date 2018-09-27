@@ -1,29 +1,27 @@
 import React, { Component } from 'react';
-import InputContainer from './InputContainer';
 import Results from './Results';
-import Button from './Button';
-import { getAuthToken } from '../helpers';
+import ResearchStarter from './ResearchStarter';
+import { cleanTitle } from '../helpers';
 import '../css/App.css';
 
 
-class FormContainer extends Component {
+class ResearchStarterContainer extends Component {
   constructor(props){
     super(props);
     this.state = {
       results: [],
       searchTerm: '',
       isLoading: false,
+      noResults: false,
       selectedStarter: '',
       title:''
     }
-    console.log(this.props);
   }
 
   selectResult = (key) => {
     this.setState({selectedStarter:this.state.results[key]});
-    var title = this.state.results[key].Items[0].Data;
-    title = title.replace("&lt;highlight&gt;", "");
-    title = title.replace("&lt;/highlight&gt;", "");
+    var title = cleanTitle(this.state.results[key].Items[0].Data);
+
     this.setState({title:title});
   }
 
@@ -31,14 +29,18 @@ class FormContainer extends Component {
   handleSubmit = (event) => {
     this.setState({isLoading: true});
     event.preventDefault();
-    const data = new FormData(event.target);
+
     var query =  event.target.topic.value;
-    console.log(query);
     var url = "https://widgets.ebscohost.com/prod/encryptedkey/eds/eds.php?k=eyJjdCI6IlhWa3kwbVg1TTk4M3JRQmVFSlhHM0p6R3owOE54WWhPMkZlTmNRY0YyZk09IiwiaXYiOiJjNmM0YmNkZTFhOTU4ZjM2ZWE1ZTYxOTIyYWU5NmU0NiIsInMiOiIxNDFjYWZlODViN2Q1MWY5In0=&p=bWFkYWxlLmFwcHMuYXBpLXNlYXJjaA==&s=0,1,1,0,0,0&q=search?query="+query+"%26relatedcontent%3Drs";
 
     fetch(url)
     .then((res) => res.json())
     .then((data) => {
+        if(data.SearchResult.Statistics.TotalHits === 0){
+          this.setState({isLoading:false});
+          this.setState({noResults:true});
+          return;
+        }
         var rsResults = data.SearchResult.RelatedContent.RelatedRecords[0].Records;
         this.setState({results:rsResults});
         console.log(rsResults);
@@ -65,8 +67,12 @@ class FormContainer extends Component {
         </form>
       </div>
       <div>
+        {
+          this.state.noResults &&
+          <span><h3>Oops! There are no results for this topic.</h3></span>
+        }
           {this.state.isLoading &&
-            <img src="http://widgets.ebscohost.com/prod/common/images/loader.gif"/>
+            <img alt="loading spinner" src="http://widgets.ebscohost.com/prod/common/images/loader.gif"/>
           }
           {this.state.results.length > 0 &&
             <span>
@@ -78,7 +84,7 @@ class FormContainer extends Component {
           }
           { this.state.selectedStarter &&
             <span>
-              <h3>{this.state.title}</h3>
+              <ResearchStarter selected={this.state.selectedStarter}  />
             </span>
           }
       </div>
@@ -87,4 +93,4 @@ class FormContainer extends Component {
   }
 }
 
-export default FormContainer;
+export default ResearchStarterContainer;
