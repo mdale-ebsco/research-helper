@@ -1,123 +1,96 @@
 import React, { Component } from 'react';
 import Header from './Header';
-import ResearchStarterContainer from './ResearchStarterContainer';
-
+import Results from './Results';
+import ResearchStarter from './ResearchStarter';
+import { cleanTitle } from '../helpers';
 import '../css/App.css';
-
-const machine = {
-  start: {
-    RS_BTN: 'rsStart',
-    EDS_BTN: 'edsStart'
-  },
-  rsStart: {
-    TOPIC_INPUT: 'rsSuccess',
-  },
-  rsSuccess: {
-    EDS_BTN: 'edsStart',
-    SOURCES: 'biblio',
-    RELATED: 'rsSuccess'
-  },
-  edsStart: {
-    ANSWERQUESTION: 'edsResults',
-    SUBMITQUERY: 'edsResults'
-  }
-};
 
 
 class App extends Component {
-  constructor(props) {
-      super(props);
-      this.state = {
-          currentState: 'start',
-          query: '',
-          items: [],
-        };
-        this.transition = this.transition.bind(this);
+  constructor(props){
+    super(props);
+    this.state = {
+      results: [],
+      searchTerm: '',
+      isLoading: false,
+      noResults: false,
+      selectedStarter: '',
+      title:''
     }
+  }
 
-    componentDidUpdate(prevProps, prevState) {
-      if (this.state.currentState === 'rsStart') {
-        this.renderRSStartPage();
-      }
-      if (this.state.currentState === 'edsStart'){
-        this.renderEDSStartPage();
-      }
-    }
+  selectResult = (key) => {
+    this.setState({selectedStarter:this.state.results[key]});
+    var title = cleanTitle(this.state.results[key].Items[0].Data);
 
-    command(nextState, action) {
-    switch (nextState) {
-      case 'rsStart':
+    this.setState({title:title});
+  }
 
-        break;
-      case 'edsStart':
 
-        break;
-      case 'null':
-        if (action.item) {
-          // update the state with the selected photo item
-          return { items: action.item };
+  handleSubmit = (event) => {
+    this.setState({isLoading: true});
+    event.preventDefault();
+
+    var query =  event.target.topic.value;
+    var url = "https://widgets.ebscohost.com/prod/encryptedkey/eds/eds.php?k=eyJjdCI6IlhWa3kwbVg1TTk4M3JRQmVFSlhHM0p6R3owOE54WWhPMkZlTmNRY0YyZk09IiwiaXYiOiJjNmM0YmNkZTFhOTU4ZjM2ZWE1ZTYxOTIyYWU5NmU0NiIsInMiOiIxNDFjYWZlODViN2Q1MWY5In0=&p=bWFkYWxlLmFwcHMuYXBpLXNlYXJjaA==&s=0,1,1,0,0,0&q=search?query="+query+"%26relatedcontent%3Drs";
+
+    fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+        if(data.SearchResult.Statistics.TotalHits === 0){
+          this.setState({isLoading:false});
+          this.setState({noResults:true});
+          return;
         }
-        break;
-      default:
-        break;
-    }
-  }
-
-  transition = (action) => {
-   const currentHelperState = this.state.currentState;
-   const nextHelperState =
-     machine[currentHelperState][action.type];
-
-   if (nextHelperState) {
-     const nextState = this.command(nextHelperState, action);
-
-     this.setState({
-       currentState: nextHelperState,
-       ...nextState
-     });
-   }
- }
-
- renderRSStartPage(){
-   if (this.state.currentState !== 'rsStart') return;
-   return(
-     <div>
-       <ResearchStarterContainer />
-     </div>
-   )
- }
+        var rsResults = data.SearchResult.RelatedContent.RelatedRecords[0].Records;
+        this.setState({results:rsResults});
+        console.log(rsResults);
+        if(rsResults){
+          this.setState({isLoading:false});
+        }
+        else {
+          return;
+        }
+    })
 
 
-  renderStartPage(state){
-     if (this.state.currentState !== 'start') return;
-    return(
-      <div>
-        <p>Are you looking for background information on a subject? Or do you have something specific you would like to research?</p>
-        <p><span className="example">An example of a specific research topic might be 'College Student Use of Snapchat'.</span><span className="example">An example of a topic you might find background information about might be 'Flower Arranging'.</span></p>
-        <button
-            onClick={() => this.transition({type: 'RS_BTN'})}
-            >
-            Background Information
-          </button>
-          <button
-            onClick={() => this.transition({type: 'EDS_BTN'})}
-            >
-            Specific Research
-          </button>
-        </div>
-    )
-  }
+}
 
   render() {
-    const helperState = this.state.currentState;
+
     return (
       <div className="research-helper">
         <Header heading="Research Helper"/>
         <div className="content">
-           {this.renderStartPage(helperState)}
-           {this.renderRSStartPage(helperState)}
-        </div>
+        <form onSubmit={this.handleSubmit}>
+          <label for="topic">What topic would you like to search for?</label>
+          <input type="text" id="topic" name="topic" required placeholder="Search..." />
+          <button>Search!</button>
+        </form>
+      <div>
+        {
+          this.state.noResults &&
+          <span><h3>Oops! There are no results for this topic.</h3></span>
+        }
+          {this.state.isLoading &&
+            <img alt="loading spinner" src="http://widgets.ebscohost.com/prod/common/images/loader.gif"/>
+          }
+          {this.state.results.length > 0 &&
+            <span>
+            <h3>Select the topic you would like to explore</h3>
+            <ul>
+              {Object.keys(this.state.results).map(key => <Results key={key} result={this.state.results[key]} loadSelectedStarter={()=>this.selectResult(key)}/>)}
+            </ul>
+          </span>
+          }
+          { this.state.selectedStarter &&
+            <span>
+              <ResearchStarter selected={this.state.selectedStarter}  />
+            </span>
+          }
       </div>
+    </div>
+  </div>
     );
   }
 }
