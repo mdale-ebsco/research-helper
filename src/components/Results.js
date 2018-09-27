@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
+import { cleanTitle } from '../helpers';
 import '../css/App.css';
 
 class Results extends Component {
   constructor(props){
     super(props);
-    console.log(this.props);
+
   }
 
+  createTitle = () => {
+    let title = [];
+    Object.keys(this.props.result.Items).map(key =>  {
+      if(this.props.result.Items[key].Label === 'Title' ) {
+        var titlemarkup = cleanTitle(this.props.result.Items[key].Data);
+
+        title = <span>{titlemarkup}</span>;
+      }
+    })
+    return title;
+  }
 
   render() {
-    const { result } = this.props;
-    var title = result.Items[0].Data;
-    title = title.replace("&lt;highlight&gt;", "");
-    title = title.replace("&lt;/highlight&gt;", "");
 
     return (
       <div>
-        <p><a onClick={this.props.loadSelectedStarter}>{title}</a></p>
+        <p><a onClick={this.props.loadSelectedStarter}>{this.createTitle()}</a></p>
       </div>
     );
   }

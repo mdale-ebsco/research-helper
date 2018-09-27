@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Header from './Header';
-import FormContainer from './FormContainer';
+import ResearchStarterContainer from './ResearchStarterContainer';
 
 import '../css/App.css';
 
@@ -23,7 +23,6 @@ const machine = {
   }
 };
 
-const initialState = 'start';
 
 class App extends Component {
   constructor(props) {
@@ -32,7 +31,6 @@ class App extends Component {
           currentState: 'start',
           query: '',
           items: [],
-          profile: 'edsfreedbs'
         };
         this.transition = this.transition.bind(this);
     }
@@ -52,7 +50,7 @@ class App extends Component {
 
         break;
       case 'edsStart':
-        alert("EDS");
+
         break;
       case 'null':
         if (action.item) {
@@ -78,15 +76,13 @@ class App extends Component {
        ...nextState
      });
    }
-   console.log("NextHelperState: ", nextHelperState);
-   console.log("this.state.currentState: ", this.state.currentState);
  }
 
  renderRSStartPage(){
    if (this.state.currentState !== 'rsStart') return;
    return(
      <div>
-       <FormContainer profile={this.state.profile} />
+       <ResearchStarterContainer />
      </div>
    )
  }

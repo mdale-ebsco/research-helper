@@ -41,14 +41,35 @@ input#topic {
   font-size:20px;
 }
 
-.rs-thumb {
-  height:20px;
-}
-
 p {
   text-align: left;
 }
 
 form label {
   display:block;
+}
+
+.rs-entry {
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16),0 0 0 1px rgba(0,0,0,0.08);
+  border-radius: 2px;
+  padding: 1px 20px;
+  line-height:1.5;
+}
+
+.rs-heading {
+  text-align: left;
+    font-family: arial,sans-serif-light,sans-serif;
+    line-height: 1.2;
+    font-size: 30px;
+    font-weight: normal;
+    width:65%;
+    float:left;
+}
+
+.rs-thumb {
+  
+}
+
+.rs-header {
+  margin: 16px 2px;
 }
