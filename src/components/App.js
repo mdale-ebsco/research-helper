@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Header from './Header';
 import Results from './Results';
 import ResearchStarter from './ResearchStarter';
+import EDS from './EDS';
 import { cleanTitle } from '../helpers';
 import '../css/App.css';
 
@@ -15,7 +16,9 @@ class App extends Component {
       isLoading: false,
       noResults: false,
       selectedStarter: '',
-      title:''
+      title:'',
+      selectedSubject:'',
+      edsResults: []
     }
   }
 
@@ -24,6 +27,21 @@ class App extends Component {
     var title = cleanTitle(this.state.results[key].Items[0].Data);
 
     this.setState({title:title});
+  }
+
+  handleSubjectClick = (dataFromChild) => {
+    console.log(dataFromChild);
+    this.setState({selectedSubject:dataFromChild});
+
+    var query = dataFromChild;
+    var url = "https://widgets.ebscohost.com/prod/encryptedkey/eds/eds.php?k=eyJjdCI6IlhWa3kwbVg1TTk4M3JRQmVFSlhHM0p6R3owOE54WWhPMkZlTmNRY0YyZk09IiwiaXYiOiJjNmM0YmNkZTFhOTU4ZjM2ZWE1ZTYxOTIyYWU5NmU0NiIsInMiOiIxNDFjYWZlODViN2Q1MWY5In0=&p=bWFkYWxlLmFwcHMuYXBpLXNlYXJjaA==&s=0,1,1,0,0,0&q=search?query="+query;
+
+    fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      this.setState({edsResults:data});
+    })
   }
 
 
@@ -37,16 +55,21 @@ class App extends Component {
     fetch(url)
     .then((res) => res.json())
     .then((data) => {
-        if(data.SearchResult.Statistics.TotalHits === 0){
+      console.log(data);
+      console.log(data.SearchResult.RelatedContent);
+        if(!data.SearchResult.RelatedContent){
           this.setState({isLoading:false});
           this.setState({noResults:true});
           return;
         }
-        var rsResults = data.SearchResult.RelatedContent.RelatedRecords[0].Records;
-        this.setState({results:rsResults});
-        console.log(rsResults);
+        else if (data.SearchResult.RelatedContent){
+          var rsResults = data.SearchResult.RelatedContent.RelatedRecords[0].Records;
+          this.setState({results:rsResults});
+          console.log(rsResults);
+        }
         if(rsResults){
           this.setState({isLoading:false});
+          this.setState({noResults:false});
         }
         else {
           return;
@@ -85,8 +108,12 @@ class App extends Component {
           }
           { this.state.selectedStarter &&
             <span>
-              <ResearchStarter selected={this.state.selectedStarter}  />
+              <ResearchStarter selected={this.state.selectedStarter}  callbackFromParent={this.handleSubjectClick}/>
             </span>
+          }
+          {
+            this.state.edsResults.length > 0 &&
+            <EDS search={this.state.selectedSubject}/>
           }
       </div>
     </div>

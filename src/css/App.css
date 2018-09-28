@@ -52,8 +52,8 @@ form label {
 .rs-entry {
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16),0 0 0 1px rgba(0,0,0,0.08);
   border-radius: 2px;
-  padding: 1px 20px;
   line-height:1.5;
+  padding-bottom: 15px;
 }
 
 .rs-heading {
@@ -67,9 +67,37 @@ form label {
 }
 
 .rs-thumb {
-  
+
+}
+
+.rs-content {
+  padding: 0 20px;
 }
 
 .rs-header {
-  margin: 16px 2px;
+    padding: 20px 20px 0px 20px;
+}
+
+.rs-subjects {
+  border-top: 1px solid rgba(0,0,0,0.16);
+}
+
+.rs-subjects h3 {
+  text-align: left;
+    padding: 0 20px;
+}
+
+.rs-subject-ctn {
+  padding: 7px 5px;
+  background-color: #F2F2F2;
+  margin-right: 10px;
+  text-align: left;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.rs-subject-ctn:hover {
+
+  background-color: #C5C5C5;
+
 }

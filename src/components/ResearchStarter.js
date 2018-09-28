@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Subjects from './Subjects';
 import { cleanTitle, cleanHTML } from '../helpers';
 import '../css/App.css';
 
@@ -43,6 +44,11 @@ class ResearchStarter extends Component {
 
     entry.push(<div class="rs-header">{header}</div>);
     entry.push(<div class="rs-content">{content}</div>);
+
+    var subjects = this.props.selected.RecordInfo.BibRecord.BibEntity.Subjects;
+    if(subjects && subjects.length > 0){
+      entry.push(<Subjects subjects={this.props.selected.RecordInfo.BibRecord.BibEntity.Subjects} callbackFromParent={this.props.callbackFromParent}/>)
+    }
 
     return entry;
   }
