@@ -18,9 +18,17 @@ class App extends Component {
       selectedStarter: '',
       title:'',
       selectedSubject:'',
-      edsResults: []
+      edsResults: [],
+      edsRecords: [],
+      hasRecords: false
     }
   }
+
+  componentDidUpdate(prevProps, prevState) {
+  if (this.state.edsResults !== prevState.edsResults) {
+     console.log(this.state.edsResults);
+  }
+}
 
   selectResult = (key) => {
     this.setState({selectedStarter:this.state.results[key]});
@@ -34,13 +42,18 @@ class App extends Component {
     this.setState({selectedSubject:dataFromChild});
 
     var query = dataFromChild;
+    this.setState({searchTerm:query});
     var url = "https://widgets.ebscohost.com/prod/encryptedkey/eds/eds.php?k=eyJjdCI6IlhWa3kwbVg1TTk4M3JRQmVFSlhHM0p6R3owOE54WWhPMkZlTmNRY0YyZk09IiwiaXYiOiJjNmM0YmNkZTFhOTU4ZjM2ZWE1ZTYxOTIyYWU5NmU0NiIsInMiOiIxNDFjYWZlODViN2Q1MWY5In0=&p=bWFkYWxlLmFwcHMuYXBpLXNlYXJjaA==&s=0,1,1,0,0,0&q=search?query="+query;
 
     fetch(url)
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
-      this.setState({edsResults:data});
+      var edsRecords = data.SearchResult.Data.Records;
+      var edsResults = data;
+      this.setState({edsResults:edsResults});
+      console.log(edsResults);
+      this.setState({edsRecords:edsRecords});
     })
   }
 
@@ -50,7 +63,7 @@ class App extends Component {
     event.preventDefault();
 
     var query =  event.target.topic.value;
-    var url = "https://widgets.ebscohost.com/prod/encryptedkey/eds/eds.php?k=eyJjdCI6IlhWa3kwbVg1TTk4M3JRQmVFSlhHM0p6R3owOE54WWhPMkZlTmNRY0YyZk09IiwiaXYiOiJjNmM0YmNkZTFhOTU4ZjM2ZWE1ZTYxOTIyYWU5NmU0NiIsInMiOiIxNDFjYWZlODViN2Q1MWY5In0=&p=bWFkYWxlLmFwcHMuYXBpLXNlYXJjaA==&s=0,1,1,0,0,0&q=search?query="+query+"%26relatedcontent%3Drs";
+    var url = "https://widgets.ebscohost.com/prod/encryptedkey/eds/eds.php?k=eyJjdCI6IlhWa3kwbVg1TTk4M3JRQmVFSlhHM0p6R3owOE54WWhPMkZlTmNRY0YyZk09IiwiaXYiOiJjNmM0YmNkZTFhOTU4ZjM2ZWE1ZTYxOTIyYWU5NmU0NiIsInMiOiIxNDFjYWZlODViN2Q1MWY5In0=&p=bWFkYWxlLmFwcHMuYXBpLXNlYXJjaA==&s=0,1,1,0,0,0&q=search?query="+encodeURI(query)+"%26relatedcontent%3Drs";
 
     fetch(url)
     .then((res) => res.json())
@@ -112,8 +125,10 @@ class App extends Component {
             </span>
           }
           {
-            this.state.edsResults.length > 0 &&
-            <EDS search={this.state.selectedSubject}/>
+            this.state.edsRecords.length > 0 &&
+            <span>
+            <EDS search={this.state.edsResults} term={this.state.searchTerm}/>
+            </span>
           }
       </div>
     </div>
